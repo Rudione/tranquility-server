@@ -1,9 +1,7 @@
-
 val h2_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val postgres_version: String by project
-
 val koin_version: String by project
 val hikaricp_version: String by project
 
@@ -17,7 +15,7 @@ group = "my.rudione"
 version = "0.0.1"
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+    mainClass.set("my.rudione.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -45,4 +43,7 @@ dependencies {
 
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
+
+    implementation("de.mkammerer.snowflake-id:snowflake-id:0.0.2")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.53.0")
 }

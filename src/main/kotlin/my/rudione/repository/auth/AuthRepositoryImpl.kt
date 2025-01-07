@@ -1,6 +1,5 @@
-package my.rudione.repository
+package my.rudione.repository.auth
 
-import io.ktor.http.HttpStatusCode
 import my.rudione.dao.user.UserDao
 import my.rudione.model.AuthResponse
 import my.rudione.model.AuthResponseData
@@ -9,10 +8,11 @@ import my.rudione.model.SignUpParams
 import my.rudione.plugins.generateToken
 import my.rudione.security.hashPassword
 import my.rudione.util.Response
+import io.ktor.http.*
 
-class UserRepositoryImpl(
+class AuthRepositoryImpl(
     private val userDao: UserDao
-) : UserRepository {
+) : AuthRepository {
 
     override suspend fun signUp(params: SignUpParams): Response<AuthResponse> {
         return if (userAlreadyExist(params.email)) {
@@ -48,7 +48,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun signIn(params: SignInParams): Response<AuthResponse> {
-        val user = userDao.findUserByEmail(params.email)
+        val user = userDao.findByEmail(params.email)
 
         return if (user == null) {
             Response.Error(
@@ -67,7 +67,9 @@ class UserRepositoryImpl(
                             id = user.id,
                             name = user.name,
                             bio = user.bio,
-                            token = generateToken(params.email)
+                            token = generateToken(params.email),
+                            followingCount = user.followingCount,
+                            followersCount = user.followersCount
                         )
                     )
                 )
@@ -83,6 +85,19 @@ class UserRepositoryImpl(
     }
 
     private suspend fun userAlreadyExist(email: String): Boolean {
-        return userDao.findUserByEmail(email) != null
+        return userDao.findByEmail(email) != null
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
