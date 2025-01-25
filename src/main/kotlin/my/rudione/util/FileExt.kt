@@ -1,15 +1,22 @@
 package my.rudione.util
 
-import io.ktor.http.content.*
+import io.ktor.http.content.PartData
+import io.ktor.utils.io.readRemaining
+import kotlinx.io.readByteArray
 import java.io.File
 import java.util.UUID
 
-fun PartData.FileItem.saveFile(folderPath: String): String{
-    val fileName = "${UUID.randomUUID()}.${File(originalFileName as String).extension}"
-    val fileBytes = streamProvider().readBytes()
+suspend fun PartData.FileItem.saveFile(folderPath: String): String {
+    val fileName = "${UUID.randomUUID()}.${File(originalFileName ?: "").extension}"
+
+    val fileBytes = provider().readRemaining().readByteArray()
 
     val folder = File(folderPath)
-    folder.mkdirs()
+    if (!folder.exists()) {
+        folder.mkdirs()
+    }
+
     File("$folder/$fileName").writeBytes(fileBytes)
+
     return fileName
 }
